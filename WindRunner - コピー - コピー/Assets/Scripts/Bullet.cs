@@ -15,6 +15,5 @@ public class Bullet : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Destroy(this.gameObject);
-        Debug.Log("呼ばれたよ");
     }
 }

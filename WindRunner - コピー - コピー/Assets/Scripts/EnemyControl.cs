@@ -29,7 +29,10 @@ public class EnemyControl : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Destroy(this.gameObject);
+        if (collision.gameObject.tag == "Bullet")
+        {
+            Destroy(this.gameObject);
+        }
         Instantiate(DeathEffect, this.transform.position, Quaternion.Euler(0, 90, 90));
         Destroy(DeathEffect, 1.0f);
     }
