@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         transform.Translate(0, bullet_speed, 0);
-        Destroy(this.gameObject, 7.0f);
+        Destroy(this.gameObject, 5.0f);
     }
 
     void OnCollisionEnter(Collision collision)

@@ -19,6 +19,7 @@ public class PlayerControl : MonoBehaviour
     public GameObject[] bulletPrefab;                       // 弾のプレハブを格納
 
     public LevelControl level_control = null;               // LevelControlを保持
+    public Result result = null;                            // Rsultを保持
     private Animator anim = null;                           // アニメーターを格納
 
     public enum STEP    // Playerの各種状態を表すデータ型
@@ -27,7 +28,8 @@ public class PlayerControl : MonoBehaviour
         RUN=0,          // 走る
         JUMP,           // ジャンプ
         DOUBLEJUMP,     // 2段ジャンプ
-        ATTACK,         // 攻撃
+        SHOT1,          // ショット1
+        SHOT2,          // ショット2
         MISS,           // ミス
         NUM,            // 状態が何種類あるかを示す（=3）
     };
@@ -46,6 +48,7 @@ public class PlayerControl : MonoBehaviour
     {
         this.next_step = STEP.RUN;          // RUN状態から始まる
         anim = GetComponent<Animator>();    // アニメーターを取得
+        result = GameObject.Find("GameRoot").GetComponent<Result>();
     }
 
     void Update()
@@ -59,16 +62,28 @@ public class PlayerControl : MonoBehaviour
         // 着地状態かどうかをチェック
         this.check_landed();
 
+        // ショット間のクールタイム
+        this.cool_time();
+
         // 時間
         time += Time.deltaTime;
 
-        switch(this.step)
+        // 弾のポジション
+        Vector3 shotPos;
+        shotPos = this.transform.position;
+        shotPos.x = this.transform.position.x + 1.0f;
+        shotPos.y = this.transform.position.y + 1.0f;
+
+        switch (this.step)
         {
             // 走る状態
             case STEP.RUN:
 
-            // 攻撃状態
-            case STEP.ATTACK:
+            // 火の玉攻撃状態
+            case STEP.SHOT1:
+
+            // 氷の玉攻撃状態
+            case STEP.SHOT2:
 
             // ジャンプ状態
             case STEP.JUMP:
@@ -95,28 +110,59 @@ public class PlayerControl : MonoBehaviour
                 // 走行中の場合
                 case STEP.RUN:
 
-                    // 走行中で、着地していて、左ボタンが押されていたら
+                    // ジャンプボタンが押されたら
                     if (Input.GetButtonDown("Jump"))
                     {
-                        // ジャンプアニメーションON
-                        anim.SetBool("Jump", true);
-
                         // 次の状態をジャンプに変更
                         this.next_step = STEP.JUMP;
                     }
 
-                    Shot();
+                    // Shot1ボタンが押されたら
+                    if (isAttackable == true && Input.GetButtonDown("Shot1")) 
+                    {
+                        // 次の状態をショット1に変更
+                        this.next_step = STEP.SHOT1;
+                    }
+
+                    // Shot2ボタンが押されたら
+                    if(isAttackable == true && Input.GetButtonDown("Shot2"))
+                    {
+                        // 次の状態をショット2に変更
+                        this.next_step = STEP.SHOT2;
+                    }
 
                     break;
 
                 // ジャンプ中の場合
                 case STEP.JUMP:
 
-                    Jump();
+                    // 着地したら
+                    if (this.is_landed)
+                    {
+                        // 次の状態を走行中に変更
+                        this.next_step = STEP.RUN;
+                    }
 
-                    DoubleJump();
+                    // ジャンプボタンが押されたら
+                    if (Input.GetButtonUp("Jump"))
+                    {
+                        // 次の状態を２段ジャンプ中に変更
+                        this.next_step = STEP.DOUBLEJUMP;
+                    }
 
-                    Shot();
+                    // Shot1ボタンが押されたら
+                    if (Input.GetButtonDown("Shot1"))
+                    {
+                        // 次の状態をショット1に変更
+                        this.next_step = STEP.SHOT1;
+                    }
+
+                    // Shot2ボタンが押されたら
+                    if (Input.GetButtonDown("Shot2"))
+                    {
+                        // 次の状態をショット2に変更
+                        this.next_step = STEP.SHOT2;
+                    }
 
                     break;
 
@@ -126,20 +172,60 @@ public class PlayerControl : MonoBehaviour
                     // 着地したら
                     if(this.is_landed)
                     {
-                        // ジャンプアニメーションOFF
-                        anim.SetBool("DoubleJump", false);
-                        Debug.Log("呼ばれたよ");
-
                         // 次の状態を走行中に変更
                         this.next_step = STEP.RUN;
                     }
+
+                    // Shot1ボタンが押されたら
+                    if (Input.GetButtonDown("Shot1"))
+                    {
+                        // 次の状態をショット1に変更
+                        this.next_step = STEP.SHOT1;
+                    }
+
+                    // Shot2ボタンが押されたら
+                    if (Input.GetButtonDown("Shot2"))
+                    {
+                        // 次の状態をショット2に変更
+                        this.next_step = STEP.SHOT2;
+                    }
+
                     break;
 
-                case STEP.ATTACK:
+                // ショット1状態の場合
+                case STEP.SHOT1:
 
-                   if(this.is_landed)
+                    // 着地していたら
+                    if (this.is_landed)
                     {
+                        // 次の状態を走るに変更
                         this.next_step = STEP.RUN;
+                    }
+
+                    // ジャンプ
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        // 次の状態をジャンプに変更
+                        this.next_step = STEP.JUMP;
+                    }
+
+                    break;
+
+                // ショット2状態の場合
+                case STEP.SHOT2:
+
+                    // 着地していたら
+                    if (this.is_landed)
+                    {
+                        // 次の状態を走るに変更
+                        this.next_step = STEP.RUN;
+                    }
+
+                    // ジャンプ
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        // 次の状態をジャンプに変更
+                        this.next_step = STEP.JUMP;
                     }
 
                     break;
@@ -167,7 +253,10 @@ public class PlayerControl : MonoBehaviour
                     break;
 
                 // ジャンプ中
-                case STEP.JUMP:             
+                case STEP.JUMP:
+
+                    // ジャンプアニメーションフラグON
+                    anim.SetBool("Jump", true);
 
                     // ジャンプ初動
                     velocity.y = Mathf.Sqrt(2.0f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
@@ -175,26 +264,37 @@ public class PlayerControl : MonoBehaviour
                     // 「ボタンが離されたフラグ」をクリアする
                     this.is_key_released = false;
 
-                    // ジャンプアニメーションフラグON
-                    anim.SetBool("Jump", true);    
                     break;
 
                 // 二段ジャンプ中
                 case STEP.DOUBLEJUMP:
 
+                    // ２段ジャンプアニメーションフラグON
+                    anim.SetBool("DoubleJump", true);
+
                     // ジャンプ初動
                     velocity.y = Mathf.Sqrt(2.0f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
 
                     // 「ボタンが離されたフラグ」をクリアする
                     this.is_key_released = false;
 
-                    // ２段ジャンプアニメーションフラグON
-                    anim.SetBool("DoubleJump", true);
                     break;
 
-                case STEP.ATTACK:
+                case STEP.SHOT1:
 
                     anim.SetBool("Attack", true);
+                    GameObject go = GameObject.Instantiate(bulletPrefab[0]) as GameObject;
+                    go.transform.position = shotPos;
+                    isAttackable = false;
+
+                    break;
+
+                case STEP.SHOT2:
+
+                    anim.SetBool("Attack", true);
+                    go = GameObject.Instantiate(bulletPrefab[1]) as GameObject;
+                    go.transform.position = shotPos;
+                    isAttackable = false;
 
                     break;
 
@@ -243,7 +343,7 @@ public class PlayerControl : MonoBehaviour
                 } while (false);
                 break;
 
-            // ジャンプ中の場合
+            // 2段ジャンプ中の場合
             case STEP.DOUBLEJUMP:
 
                 do
@@ -298,7 +398,6 @@ public class PlayerControl : MonoBehaviour
     // 接地しているか確認
     private void check_landed()
     {
-        // とりあえずfalse
         this.is_landed = false;     
 
         do
@@ -307,7 +406,7 @@ public class PlayerControl : MonoBehaviour
             Vector3 player_position = this.transform.position;
 
             // プレイヤーからプレイヤー下に1.0f移動した位置
-            Vector3 player_position_down = player_position + Vector3.down * 0.1f;    
+            Vector3 player_position_down = player_position + Vector3.down * 0.2f;    
 
             RaycastHit hit;
 
@@ -323,16 +422,9 @@ public class PlayerControl : MonoBehaviour
         } while (false);
     }
 
-    // 攻撃処理
-    private void Shot()
+    private void cool_time()
     {
-        // 弾のポジション
-        Vector3 shotPos;
-        shotPos = this.transform.position;
-        shotPos.x = this.transform.position.x + 1.0f;
-        shotPos.y = this.transform.position.y + 1.0f;
-
-        // isAttackableがfalseなら、直前のフレームからの経過時間を足す
+        // 直前のフレームからの経過時間を足す
         if (isAttackable == false)
         {
             lapseTime += Time.deltaTime;
@@ -344,52 +436,13 @@ public class PlayerControl : MonoBehaviour
                 anim.SetBool("Attack", false);
             }
         }
-
-        // マウスが左クリックされたら攻撃
-        if (isAttackable == true && Input.GetButtonDown("Shot1")) 
-        {
-            anim.SetBool("Attack", true);
-            GameObject go = GameObject.Instantiate(bulletPrefab[0]) as GameObject;
-            go.transform.position = shotPos;
-            isAttackable = false;
-            this.next_step = STEP.ATTACK;
-        }
-        // マウスが右クリックされたら
-        if (isAttackable == true && Input.GetButtonDown("Shot2")) 
-        {
-            anim.SetBool("Attack", true);
-            GameObject go = GameObject.Instantiate(bulletPrefab[1]) as GameObject;
-            go.transform.position = shotPos;
-            isAttackable = false;
-            this.next_step = STEP.ATTACK;
-        }
     }
 
-    // ジャンプ処理
-    private void Jump()
+    private void OnCollisionEnter(Collision collision)
     {
-        // ジャンプ中で、着地していたら
-        if (this.is_landed)
+        if(collision.gameObject.tag=="Enemy")
         {
-            // ジャンプアニメーションOFF
-            anim.SetBool("Jump", false);
-
-            // 次の状態を走行中に変更
-            this.next_step = STEP.RUN;
-        }
-    }
-
-    // 2段ジャンプ処理
-    private void DoubleJump()
-    {
-        // マウス左クリックで２段ジャンプ
-        if (Input.GetButtonUp("Jump"))
-        {
-            // ２段ジャンプアニメーションON
-            anim.SetBool("DoubleJump", true);
-
-            // 次の状態を２段ジャンプ中に変更
-            this.next_step = STEP.DOUBLEJUMP;
+            this.result.GameResult();
         }
     }
 

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class Result : MonoBehaviour
 {
     private GameObject dis_text=null;
-    public PlayerControl player = null;
+    public PlayerControl player_control = null;
     public GameObject result_screen = null;
     public GameObject result_object = null;
 
@@ -17,16 +17,21 @@ public class Result : MonoBehaviour
     // 経過時間
     float time = 0.0f;
 
-    private void Start()
+    public void Start()
     {
-        this.player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControl>();
+        this.player_control = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControl>();
         this.dis_text = GameObject.Find("DistanceText");
     }
 
-    private void Update()
+    public void Update()
+    {
+        this.GameResult();
+    }
+
+    public void GameResult()
     {
         // ゲーム終了時
-        if (this.player.isPlayEnd())
+        if (this.player_control.isPlayEnd())
         {
             // 距離テキストを消す
             dis_text.SetActive(false);
@@ -35,7 +40,7 @@ public class Result : MonoBehaviour
             result_screen.SetActive(true);
 
             // 終了時の距離
-            player_dis = (int)player.transform.position.x;
+            player_dis = (int)player_control.transform.position.x;
 
             Text result_text = result_object.GetComponent<Text>();
 
@@ -45,7 +50,7 @@ public class Result : MonoBehaviour
             time += Time.deltaTime;
 
             // 終了後2秒以上経ってるかつマウスが右クリックされたら
-            if (time >= 2.0f && Input.GetMouseButtonDown(0)) 
+            if (time >= 2.0f && Input.GetMouseButtonDown(0))
             {
                 SceneManager.LoadScene("TitleScene");
             }

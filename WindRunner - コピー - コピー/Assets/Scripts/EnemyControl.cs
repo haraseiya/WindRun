@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemyControl : MonoBehaviour
 {
-    [SerializeField]
-    GameObject DeathEffect;
-
     // MapCreatorを保管するための変数
     public MapCreator map_creator = null;
 
@@ -24,13 +21,5 @@ public class EnemyControl : MonoBehaviour
             // 自分自身を削除
             GameObject.Destroy(this.gameObject);
         }
-        
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Destroy(this.gameObject);
-        Instantiate(DeathEffect, this.transform.position, Quaternion.Euler(0, 90, 90));
-        Destroy(DeathEffect, 1.0f);
     }
 }

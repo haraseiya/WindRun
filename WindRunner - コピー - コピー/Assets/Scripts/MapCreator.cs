@@ -26,10 +26,12 @@ public class MapCreator : MonoBehaviour
     public static float BLOCK_HEIGHT = 0.2f;
 
     // 敵の高さ
-    public static float ENEMY_HEIGHT = 6.0f;
+    public float ENEMY_HEIGHT = 3.0f;
 
     // 画面に収まるブロック数
-    public static int BLOCK_NUM_IN_SCREEN = 100;    
+    public static int BLOCK_NUM_IN_SCREEN = 100;
+
+    float time;
 
     private LevelControl level_control = null;
 
@@ -69,6 +71,7 @@ public class MapCreator : MonoBehaviour
 
     void Update()
     {
+        time += Time.deltaTime;
         // プレイヤーのX位置を取得
         float block_generate_x = this.player.transform.position.x;
 
@@ -80,7 +83,12 @@ public class MapCreator : MonoBehaviour
         while (this.last_block.position.x<block_generate_x)
         {
             this.create_floor_block();
-            this.create_enemy();
+
+            if (time > 3) 
+            {
+                this.create_enemy();
+                time = 0;
+            }
         }
     }
 
@@ -89,12 +97,15 @@ public class MapCreator : MonoBehaviour
         // これから作る敵のポジション
         Vector3 enemy_position;
 
+        // 敵の高さをランダムに設定
+        ENEMY_HEIGHT = Random.Range(1, 3);
+
         // last_blockが未作成の場合
         if (!this.last_block.is_created)
         {
             enemy_position = this.player.transform.position;
             enemy_position.x -= BLOCK_WIDTH * ((float)BLOCK_NUM_IN_SCREEN / 2.0f);
-            enemy_position.y = 1.0f;
+            enemy_position.y = ENEMY_HEIGHT;
         }
         else
         {
