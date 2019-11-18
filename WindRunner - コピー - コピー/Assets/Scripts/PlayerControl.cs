@@ -11,9 +11,9 @@ public class PlayerControl : MonoBehaviour
     public static float JUMP_KEY_RELEASE_REDUCE = 0.5f;     // ジャンプからの減速値
     public static float NARAKU_HEIGHT = -2.0f;              // しきい値
     public float current_speed = 0.0f;                      // 現在のスピード
-    public bool isAttackable = true;                        // 攻撃できるかどうか
     public float lapseTime = 0.0f;                          // クールタイム
     private float CLICK_GRACE_TIME = 0.5f;                  // 「ジャンプしたい意志」を受け付ける時間
+    public bool isAttackable = true;                        // 攻撃できるかどうか
     float time = 0.0f;                                      // 経過時間
 
     public GameObject[] bulletPrefab;                       // 弾のプレハブを格納
