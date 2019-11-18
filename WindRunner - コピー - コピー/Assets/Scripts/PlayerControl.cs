@@ -255,11 +255,11 @@ public class PlayerControl : MonoBehaviour
                 // ジャンプ中
                 case STEP.JUMP:
 
-                    // ジャンプアニメーションフラグON
-                    anim.SetBool("Jump", true);
-
                     // ジャンプ初動
                     velocity.y = Mathf.Sqrt(2.0f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
+
+                    // ジャンプアニメーションフラグON
+                    anim.SetBool("Jump", true);
 
                     // 「ボタンが離されたフラグ」をクリアする
                     this.is_key_released = false;
@@ -269,11 +269,11 @@ public class PlayerControl : MonoBehaviour
                 // 二段ジャンプ中
                 case STEP.DOUBLEJUMP:
 
-                    // ２段ジャンプアニメーションフラグON
-                    anim.SetBool("DoubleJump", true);
-
                     // ジャンプ初動
                     velocity.y = Mathf.Sqrt(2.0f * 9.8f * PlayerControl.JUMP_HEIGHT_MAX);
+
+                    // ２段ジャンプアニメーションフラグON
+                    anim.SetBool("DoubleJump", true);
 
                     // 「ボタンが離されたフラグ」をクリアする
                     this.is_key_released = false;
@@ -438,11 +438,12 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    // プレイヤーと敵がぶつかったとき
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag=="Enemy")
         {
-            this.result.GameResult();
+            this.next_step = STEP.MISS;
         }
     }
 

@@ -13,7 +13,7 @@ public class FireEnemyControl : MonoBehaviour
         if (collision.gameObject.tag == "IceBullet")
         {
             Destroy(this.gameObject);
-            Instantiate(DeathEffect, this.transform.position, Quaternion.Euler(0, 90, 90));
+            Instantiate(DeathEffect, this.transform.position, Quaternion.identity);
         }
     }
 }
