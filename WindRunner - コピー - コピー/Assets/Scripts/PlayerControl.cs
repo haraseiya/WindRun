@@ -14,6 +14,8 @@ public class PlayerControl : MonoBehaviour
     public float lapseTime = 0.0f;                          // クールタイム
     private float CLICK_GRACE_TIME = 0.5f;                  // 「ジャンプしたい意志」を受け付ける時間
     public bool isAttackable = true;                        // 攻撃できるかどうか
+    bool isRightEdge = false;                               // 右端にいるかどうか
+    bool isLeftEdge = false;                                // 左端にいるかどうか
     float time = 0.0f;                                      // 経過時間
 
     public GameObject[] bulletPrefab;                       // 弾のプレハブを格納
@@ -58,6 +60,9 @@ public class PlayerControl : MonoBehaviour
 
         // 現在のスピードをレベルに合わせる
         this.current_speed = this.level_control.getPlayerSpeed();
+
+        // 端っこにいるかどうかチェック
+        this.check_edge();
 
         // 着地状態かどうかをチェック
         this.check_landed();
@@ -109,6 +114,22 @@ public class PlayerControl : MonoBehaviour
             {
                 // 走行中の場合
                 case STEP.RUN:
+
+                    // 右ボタンが押されたら
+                    if (Input.GetButtonDown("Right") && !isRightEdge) 
+                    {
+                        isLeftEdge = false;
+                        transform.position = Vector3.Lerp(transform.position,
+                            new Vector3(transform.position.x, transform.position.y, transform.position.z + MapCreator.BLOCK_WIDTH), 0.8f);
+                    }
+
+                    // 左ボタンが押されたら
+                    if (Input.GetButtonDown("Left") && !isLeftEdge) 
+                    {
+                        isRightEdge = false;
+                        transform.position = Vector3.Lerp(transform.position,
+                            new Vector3(transform.position.x, transform.position.y, transform.position.z - MapCreator.BLOCK_WIDTH), 0.8f);
+                    }
 
                     // ジャンプボタンが押されたら
                     if (Input.GetButtonDown("Jump"))
@@ -170,7 +191,7 @@ public class PlayerControl : MonoBehaviour
                 case STEP.DOUBLEJUMP:
 
                     // 着地したら
-                    if(this.is_landed)
+                    if (this.is_landed)
                     {
                         // 次の状態を走行中に変更
                         this.next_step = STEP.RUN;
@@ -420,6 +441,19 @@ public class PlayerControl : MonoBehaviour
             //  sからeの間に何かがあり、JUMP直後でない場合のみ、以下が実行される
             this.is_landed = true;
         } while (false);
+    }
+
+    // 端っこにいるか
+    private void check_edge()
+    {
+        if (transform.position.z > 0) 
+        {
+            isRightEdge = true;
+        }
+        if (transform.position.z < 0) 
+        {
+            isLeftEdge = true;
+        }
     }
 
     private void cool_time()
