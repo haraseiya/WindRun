@@ -20,7 +20,7 @@ public class MapCreator : MonoBehaviour
     public TextAsset level_data_text = null;
 
     // ブロックの幅
-    public static float BLOCK_WIDTH = 1.0f;
+    public static float BLOCK_WIDTH = 6.2f;
 
     // ブロックの高さ
     public static float BLOCK_HEIGHT = 0.2f;
@@ -29,7 +29,7 @@ public class MapCreator : MonoBehaviour
     public float ENEMY_HEIGHT = 3.0f;
 
     // 画面に収まるブロック数
-    public static int BLOCK_NUM_IN_SCREEN = 100;
+    public static int BLOCK_NUM_IN_SCREEN = 30;
 
     float time;
 
@@ -71,7 +71,9 @@ public class MapCreator : MonoBehaviour
 
     void Update()
     {
+        // 時間計測
         time += Time.deltaTime;
+
         // プレイヤーのX位置を取得
         float block_generate_x = this.player.transform.position.x;
 
@@ -96,9 +98,6 @@ public class MapCreator : MonoBehaviour
     {
         // これから作る敵のポジション
         Vector3 enemy_position;
-
-        // 敵の高さをランダムに設定
-        ENEMY_HEIGHT = Random.Range(1, 3);
 
         // last_blockが未作成の場合
         if (!this.last_block.is_created)

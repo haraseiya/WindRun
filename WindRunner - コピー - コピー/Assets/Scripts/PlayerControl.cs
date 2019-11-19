@@ -411,7 +411,7 @@ public class PlayerControl : MonoBehaviour
             RaycastHit hit;
 
             // プレイヤー位置からプレイヤー下0.1の間に何もない場合
-            if (!Physics.Linecast(player_position, player_position_down, out hit))
+            if (!Physics.Linecast(player_position, player_position_down, out hit)) 
             {
                 // 何もせずdo∼whileループを抜ける
                 break;  

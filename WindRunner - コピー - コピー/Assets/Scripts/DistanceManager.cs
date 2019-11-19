@@ -27,13 +27,14 @@ public class DistanceManager: MonoBehaviour
 
         score_text.text = player_dis + "m";
         
-        // 50m毎に報告する
-        if (player_dis != 0 && player_dis % 50 == 0) 
+        // 100m毎に中間報告する
+        if (player_dis != 0 && player_dis % 100 == 0) 
         {
             dis_text.text = player_dis + "m";
             dis_report.SetActive(true);
             time = 0.0f;
         }
+
         // 2秒たったらfalse
         else if(time>=2.0f)
         {

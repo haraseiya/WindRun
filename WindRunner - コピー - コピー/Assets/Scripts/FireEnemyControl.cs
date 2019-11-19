@@ -10,7 +10,7 @@ public class FireEnemyControl : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "IceBullet")
+        if (collision.gameObject.tag == "FireBullet")
         {
             Destroy(this.gameObject);
             Instantiate(DeathEffect, this.transform.position, Quaternion.identity);

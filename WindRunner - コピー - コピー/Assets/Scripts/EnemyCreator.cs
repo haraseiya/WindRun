@@ -16,13 +16,13 @@ public class EnemyCreator : MonoBehaviour
         // 作成すべきエネミーの種類を求める
         int next_enemy_type = Random.Range(0,2);
 
-        // ブロックを生成し、goに保管
+        // エネミーを生成し、goに保管
         GameObject go = GameObject.Instantiate(this.enemyPrefabs[next_enemy_type]) as GameObject;
 
-        // ブロックの位置を移動
+        // エネミーの位置を移動
         go.transform.position = enemy_position;
 
-        // ブロックのカウントをインクリメント
+        // エネミーのカウントをインクリメント
         this.enemy_count++;
     }
 
