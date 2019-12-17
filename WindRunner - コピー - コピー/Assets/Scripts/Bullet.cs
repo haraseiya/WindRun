@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float bullet_speed = -1.0f;
-
-    void Update()
+    
+    void FixedUpdate()
     {
+        float bullet_speed = -30.0f * Time.deltaTime;
         transform.Translate(0, bullet_speed, 0);
         Destroy(this.gameObject, 5.0f);
     }
